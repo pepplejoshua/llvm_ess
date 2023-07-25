@@ -16,12 +16,19 @@ Function* createFunc(IRBuilder<>& builder, std::string name) {
   return fooFunc;
 }
 
+BasicBlock* createBB(Function* fooFunc, std::string name) {
+  return BasicBlock::Create(*TheContext, name, fooFunc);
+}
+
 int main(int argc, char* argv[]) {
   TheContext = std::make_unique<LLVMContext>();
   Builder = std::make_unique<IRBuilder<>>(*TheContext);
   TheModule = std::make_unique<Module>("llvm_ess", *TheContext);
 
   Function* fooFunc = createFunc(*Builder, "foo");
+  BasicBlock* entry = createBB(fooFunc, "entry");
+
+  Builder->SetInsertPoint(entry);
   verifyFunction(*fooFunc);
 
   TheModule->print(errs(), nullptr);
